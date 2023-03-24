@@ -8,6 +8,8 @@ const (
 	ABCISemVer = "0.17.0"
 
 	ABCIVersion = ABCISemVer
+
+	MevTMVersion = "v0.34.27-mev.16"
 )
 
 var (

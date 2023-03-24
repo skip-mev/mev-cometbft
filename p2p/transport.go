@@ -53,6 +53,7 @@ type peerConfig struct {
 	msgTypeByChID map[byte]proto.Message
 	metrics       *Metrics
 	mlc           *metricsLabelCache
+	isSidecarPeer func(ID) bool
 }
 
 // Transport emits and connects to Peers. The implementation of Peer is left to
@@ -509,6 +510,10 @@ func (mt *MultiplexTransport) wrapPeer(
 			}
 		}
 	}
+	skipPeer := false
+	if cfg.isSidecarPeer != nil {
+		skipPeer = cfg.isSidecarPeer(ni.ID())
+	}
 
 	peerConn := newPeerConn(
 		cfg.outbound,
@@ -524,6 +529,7 @@ func (mt *MultiplexTransport) wrapPeer(
 		cfg.reactorsByCh,
 		cfg.msgTypeByChID,
 		cfg.chDescs,
+		skipPeer,
 		cfg.onPeerError,
 		cfg.mlc,
 		PeerMetrics(cfg.metrics),

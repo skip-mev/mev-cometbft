@@ -82,6 +82,10 @@ func checkConfig(configFile string) bool {
 		"propose",
 		"max",
 		"genesis",
+		"skip",
+		"sentinel_rpc_string",
+		"sentinel_peer_string",
+		"personal_peer_ids",
 	}
 	for _, e := range elems {
 		if !strings.Contains(configFile, e) {

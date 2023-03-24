@@ -31,6 +31,7 @@ import (
 	mempl "github.com/tendermint/tendermint/mempool"
 	mempoolv0 "github.com/tendermint/tendermint/mempool/v0"
 	mempoolv1 "github.com/tendermint/tendermint/mempool/v1"
+	"github.com/tendermint/tendermint/mev"
 	"github.com/tendermint/tendermint/p2p"
 	"github.com/tendermint/tendermint/privval"
 	cmtproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -399,6 +400,7 @@ func newStateWithConfigAndBlockStore(
 
 	// Make Mempool
 	var mempool mempl.Mempool
+	sidecar := mempl.NewCListSidecar(state.LastBlockHeight, log.NewNopLogger(), mev.NopMetrics())
 
 	switch config.Mempool.Version {
 	case cfg.MempoolV0:
@@ -434,7 +436,7 @@ func newStateWithConfigAndBlockStore(
 		panic(err)
 	}
 
-	blockExec := sm.NewBlockExecutor(stateStore, log.TestingLogger(), proxyAppConnCon, mempool, evpool)
+	blockExec := sm.NewBlockExecutor(stateStore, log.TestingLogger(), proxyAppConnCon, mempool, evpool, sidecar)
 	cs := NewState(thisConfig.Consensus, state, blockExec, blockStore, mempool, evpool)
 	cs.SetLogger(log.TestingLogger().With("module", "consensus"))
 	cs.SetPrivValidator(pv)
