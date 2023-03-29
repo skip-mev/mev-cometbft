@@ -258,7 +258,6 @@ func (blockExec *BlockExecutor) Commit(
 		)
 		if err != nil {
 			blockExec.logger.Error("error while updating sidecar", "err", err)
-			return nil, 0, err
 		}
 	}
 
@@ -270,10 +269,6 @@ func (blockExec *BlockExecutor) Commit(
 		TxPreCheck(state),
 		TxPostCheck(state),
 	)
-	if err != nil {
-		blockExec.logger.Error("error while updating mempool", "err", err)
-		return nil, 0, err
-	}
 
 	return res.Data, res.RetainHeight, err
 }
